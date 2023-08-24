@@ -1,6 +1,8 @@
 @startuml
 
-[*] --> STARTED: POST /api/start
+[*] --> IDLE
+
+IDLE --> STARTED: start by request
 
 STARTED --> CATEGORY_PROCESSING : request all categories
 
@@ -10,9 +12,11 @@ MAKING_CSV_FILES --> CATEGORY_PROCESSING : categories are not over
 
 MAKING_CSV_FILES --> MAKING_ZIP_ARCHIVES : categories are over
 
-MAKING_ZIP_ARCHIVES --> SENDING_EMAIL : finish making archives
+MAKING_ZIP_ARCHIVES --> FINISHED : finish making archives
 
-SENDING_EMAIL --> [*]
+FINISHED --> FINISHED : send email
+
+FINISHED --> [*]
 
 CATEGORY_PROCESSING : queue of categories sorted in alphabetical order
 MAKING_CSV_FILES : make csv files up to brand and category
