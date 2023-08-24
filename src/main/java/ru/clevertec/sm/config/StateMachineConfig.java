@@ -1,5 +1,6 @@
 package ru.clevertec.sm.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
@@ -8,6 +9,7 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 import ru.clevertec.sm.statemachine.Events;
 import ru.clevertec.sm.statemachine.States;
 
+@Configuration
 @EnableStateMachine
 public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<States, Events> {
 
@@ -19,7 +21,7 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<States
     @Override
     public void configure(StateMachineStateConfigurer<States, Events> states) throws Exception {
         states.withStates()
-                .initial(States.IDLE)
+                .initial(States.STARTED)
 //                .state(States.STARTED, fetchCategories())
                 .state(States.CATEGORY_PROCESSING)
                 .state(States.MAKING_CSV_FILES)
@@ -32,11 +34,6 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<States
     @Override
     public void configure(StateMachineTransitionConfigurer<States, Events> transitions) throws Exception {
         transitions.withExternal()
-                .source(States.IDLE)
-                .target(States.STARTED)
-                .event(Events.LAUNCH_MACHINE)
-                .and()
-                .withExternal()
                 .source(States.STARTED)
                 .target(States.CATEGORY_PROCESSING)
                 .event(Events.REQUEST_CATEGORIES)

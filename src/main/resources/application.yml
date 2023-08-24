@@ -1,0 +1,9 @@
+source:
+  urls:
+    prefix: https://dummyjson.com/products
+    productsByCategory: ${source.urls.prefix}/category/
+    categories: ${source.urls.prefix}/categories/
+
+subscribers:
+  emails:
+    - kirill19962003@gmail.com
