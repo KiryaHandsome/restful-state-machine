@@ -1,8 +1,6 @@
 @startuml
 
-[*] --> IDLE
-
-IDLE --> STARTED: start by request
+[*] --> STARTED : start by request
 
 STARTED --> CATEGORY_PROCESSING : request all categories
 
@@ -12,15 +10,14 @@ MAKING_CSV_FILES --> CATEGORY_PROCESSING : categories are not over
 
 MAKING_CSV_FILES --> MAKING_ZIP_ARCHIVES : categories are over
 
-MAKING_ZIP_ARCHIVES --> FINISHED : finish making archives
+MAKING_ZIP_ARCHIVES --> IDLE : finish making archives
 
-FINISHED --> FINISHED : send email
+IDLE --> IDLE : send email
 
-FINISHED --> [*]
+IDLE --> [*]
 
 CATEGORY_PROCESSING : queue of categories sorted in alphabetical order
 MAKING_CSV_FILES : make csv files up to brand and category
 MAKING_ZIP_ARCHIVES : make zip for each brand
-SENDING_EMAIL : send email to all subscribers
 
 @enduml

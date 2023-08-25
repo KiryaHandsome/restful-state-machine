@@ -5,6 +5,5 @@ public enum States {
     CATEGORY_PROCESSING,
     MAKING_CSV_FILES,
     MAKING_ZIP_ARCHIVES,
-    SENDING_EMAIL,
-    FINISHED
+    IDLE
 }

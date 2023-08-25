@@ -1,9 +1,10 @@
 package ru.clevertec.sm.statemachine;
 
 public enum Events {
-    REQUEST_CATEGORIES,
-    REQUEST_PRODUCTS,
+    STARTED_WITH_CATEGORY,
+    FETCH_CATEGORIES,
+    PRODUCTS_FETCHED,
     CATEGORIES_REMAINED,
     FINISH_CSV_FILES,
-    SEND_EMAIL,
+    SEND_EMAIL, FINISH_ZIP_ARCHIVES,
 }
