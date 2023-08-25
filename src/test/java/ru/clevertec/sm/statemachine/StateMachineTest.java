@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StateMachineTest {
 
     @Autowired
-    private StateMachine<States, Events> stateMachine;
+    private StateMachine<State, Event> stateMachine;
 
     @BeforeEach
     void setUp() {
@@ -28,59 +28,59 @@ public class StateMachineTest {
 
     @Test
     void checkInitialStateShouldBeStarted() {
-        States state = stateMachine.getState().getId();
+        State state = stateMachine.getState().getId();
 
-        assertThat(state).isEqualTo(States.STARTED);
+        assertThat(state).isEqualTo(State.STARTED);
     }
 
     @Test
     void checkStateAfterStartWithCategoryShouldBeCategoryProcessing() {
-        StateMachineUtil.sendEventToSM(stateMachine, Events.STARTED_WITH_CATEGORY);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.STARTED_WITH_CATEGORY);
 
-        States state = stateMachine.getState().getId();
+        State state = stateMachine.getState().getId();
 
-        assertThat(state).isEqualTo(States.CATEGORY_PROCESSING);
+        assertThat(state).isEqualTo(State.CATEGORY_PROCESSING);
     }
 
     @Test
     void checkStateAfterFetchCategoriesShouldBeCategoryProcessing() {
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FETCH_CATEGORIES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
 
-        States state = stateMachine.getState().getId();
+        State state = stateMachine.getState().getId();
 
-        assertThat(state).isEqualTo(States.CATEGORY_PROCESSING);
+        assertThat(state).isEqualTo(State.CATEGORY_PROCESSING);
     }
 
     @Test
     void checkStateAfterFetchProductsShouldBeMakingCSVFiles() {
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Events.PRODUCTS_FETCHED);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.PRODUCTS_FETCHED);
 
-        States state = stateMachine.getState().getId();
+        State state = stateMachine.getState().getId();
 
-        assertThat(state).isEqualTo(States.MAKING_CSV_FILES);
+        assertThat(state).isEqualTo(State.MAKING_CSV_FILES);
     }
 
     @Test
     void checkStateAfterFinishCSVFilesShouldBeMakingZipArchives() {
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Events.PRODUCTS_FETCHED);
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FINISH_CSV_FILES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.PRODUCTS_FETCHED);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
 
-        States state = stateMachine.getState().getId();
+        State state = stateMachine.getState().getId();
 
-        assertThat(state).isEqualTo(States.MAKING_ZIP_ARCHIVES);
+        assertThat(state).isEqualTo(State.MAKING_ZIP_ARCHIVES);
     }
 
     @Test
     void checkStateAfterFinishShouldBeIdle() {
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Events.PRODUCTS_FETCHED);
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FINISH_CSV_FILES);
-        StateMachineUtil.sendEventToSM(stateMachine, Events.FINISH_ZIP_ARCHIVES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.PRODUCTS_FETCHED);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_ZIP_ARCHIVES);
 
-        States state = stateMachine.getState().getId();
+        State state = stateMachine.getState().getId();
 
-        assertThat(state).isEqualTo(States.IDLE);
+        assertThat(state).isEqualTo(State.IDLE);
     }
 }

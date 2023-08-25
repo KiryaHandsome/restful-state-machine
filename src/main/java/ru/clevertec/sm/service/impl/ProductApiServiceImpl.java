@@ -2,62 +2,47 @@ package ru.clevertec.sm.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 import ru.clevertec.sm.dto.Product;
 import ru.clevertec.sm.dto.ProductResponse;
 import ru.clevertec.sm.service.ProductApiService;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
 @Service
 public class ProductApiServiceImpl implements ProductApiService {
 
-    private final WebClient webClient;
+    private final String baseUrl;
     private final String categoriesUri;
+    private final RestTemplate restTemplate;
     private final String productsByCategoryUri;
 
-    public ProductApiServiceImpl(@Value("${productApi.baseUrl}") String baseUrl,
-                                 @Value("${productApi.categoriesUri}") String categoriesUri,
-                                 @Value("${productApi.categoryUri}") String productsByCategoryUri) {
+    public ProductApiServiceImpl(
+            RestTemplate restTemplate,
+            @Value("${productApi.baseUrl}") String baseUrl,
+            @Value("${productApi.categoryUri}") String productsByCategoryUri,
+            @Value("${productApi.categoriesUri}") String categoriesUri
+    ) {
+        this.baseUrl = baseUrl;
+        this.restTemplate = restTemplate;
         this.categoriesUri = categoriesUri;
-        this.webClient = WebClient.create(baseUrl);
         this.productsByCategoryUri = productsByCategoryUri;
     }
 
-    /**
-     * Fetch category from {@link ProductApiServiceImpl#categoriesUri}
-     * sorted in alphabetical order
-     *
-     * @return stream of categories
-     */
     @Override
     public List<String> fetchSortedCategories() {
-        return webClient.get()
-                .uri(categoriesUri)
-                .retrieve()
-                .bodyToMono(String[].class)
-                .map(Arrays::asList)
-                .block()
-                .stream()
+        String[] categories = restTemplate.getForObject(categoriesUri, String[].class);
+        return Arrays.stream(categories)
                 .sorted()
                 .toList();
     }
 
-    /**
-     * Fetch products by its category from {@link ProductApiServiceImpl#productsByCategoryUri}
-     *
-     * @param category category to fetch
-     * @return stream of products with such category
-     */
     @Override
     public List<Product> fetchProductsByCategory(String category) {
-        return webClient.get()
-                .uri(productsByCategoryUri + category)
-                .retrieve()
-                .bodyToMono(ProductResponse.class)
-                .map(ProductResponse::getProducts)
-                .block();
+        ProductResponse productResponse = restTemplate.getForObject(productsByCategoryUri + category, ProductResponse.class);
+        return productResponse != null ? productResponse.getProducts() : Collections.emptyList();
     }
 }

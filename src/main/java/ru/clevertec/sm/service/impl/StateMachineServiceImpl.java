@@ -6,8 +6,8 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.clevertec.sm.service.StateMachineService;
-import ru.clevertec.sm.statemachine.Events;
-import ru.clevertec.sm.statemachine.States;
+import ru.clevertec.sm.statemachine.Event;
+import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.util.ProductsSMConstants;
 
 import java.util.Map;
@@ -17,10 +17,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StateMachineServiceImpl implements StateMachineService {
 
-    private final StateMachine<States, Events> stateMachine;
+    private final StateMachine<State, Event> stateMachine;
 
     /**
-     * Starts state machine and send event {@link Events#FETCH_CATEGORIES} to it.
+     * Starts state machine and send event {@link Event#FETCH_CATEGORIES} to it.
      *
      * @param sendEmail
      * @param category
@@ -32,11 +32,11 @@ public class StateMachineServiceImpl implements StateMachineService {
                 .subscribe();
         if (category.isPresent()) {
             putVariableToSM(ProductsSMConstants.VARIABLE_CURRENT_CATEGORY, category.get());
-            sendEvent(Events.STARTED_WITH_CATEGORY);
+            sendEvent(Event.STARTED_WITH_CATEGORY);
         } else {
             stateMachine.sendEvent(Mono.just(
                             MessageBuilder
-                                    .withPayload(Events.FETCH_CATEGORIES)
+                                    .withPayload(Event.FETCH_CATEGORIES)
                                     .build()
                     ))
                     .subscribe();
@@ -51,7 +51,7 @@ public class StateMachineServiceImpl implements StateMachineService {
     }
 
     @Override
-    public States getCurrentState() {
+    public State getCurrentState() {
         return stateMachine.getState().getId();
     }
 
@@ -61,7 +61,7 @@ public class StateMachineServiceImpl implements StateMachineService {
                 .put(key, value);
     }
 
-    public void sendEvent(Events event) {
+    public void sendEvent(Event event) {
         stateMachine.sendEvent(Mono.just(
                         MessageBuilder
                                 .withPayload(event)

@@ -1,6 +1,6 @@
 package ru.clevertec.sm.statemachine;
 
-public enum States {
+public enum State {
     STARTED,
     CATEGORY_PROCESSING,
     MAKING_CSV_FILES,

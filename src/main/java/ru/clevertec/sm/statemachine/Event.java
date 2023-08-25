@@ -1,6 +1,6 @@
 package ru.clevertec.sm.statemachine;
 
-public enum Events {
+public enum Event {
     STARTED_WITH_CATEGORY,
     FETCH_CATEGORIES,
     PRODUCTS_FETCHED,

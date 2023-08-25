@@ -13,12 +13,11 @@ import org.springframework.statemachine.config.builders.StateMachineStateConfigu
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 import org.springframework.statemachine.listener.StateMachineListener;
 import org.springframework.statemachine.listener.StateMachineListenerAdapter;
-import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.transition.Transition;
 import ru.clevertec.sm.dto.Product;
 import ru.clevertec.sm.service.ProductApiService;
-import ru.clevertec.sm.statemachine.Events;
-import ru.clevertec.sm.statemachine.States;
+import ru.clevertec.sm.statemachine.Event;
+import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.util.ProductsSMConstants;
 import ru.clevertec.sm.util.StateMachineUtil;
 
@@ -31,89 +30,89 @@ import java.util.Optional;
 @Configuration
 @EnableStateMachine
 @RequiredArgsConstructor
-public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<States, Events> {
+public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State, Event> {
 
     private final ProductApiService productApiService;
 
     @Override
-    public void configure(StateMachineConfigurationConfigurer<States, Events> config) throws Exception {
+    public void configure(StateMachineConfigurationConfigurer<State, Event> config) throws Exception {
         config.withConfiguration()
                 .listener(listener());
     }
 
-    private StateMachineListener<States, Events> listener() {
+    private StateMachineListener<State, Event> listener() {
         return new StateMachineListenerAdapter<>() {
             @Override
-            public void transition(Transition<States, Events> transition) {
+            public void transition(Transition<State, Event> transition) {
                 log.warn("Transition from <{}> to <{}>",
                         ofNullableState(transition.getSource()),
                         ofNullableState(transition.getTarget()));
             }
 
             @Override
-            public void eventNotAccepted(Message<Events> event) {
+            public void eventNotAccepted(Message<Event> event) {
                 log.error("Event not accepted: <{}>", event);
             }
 
-            private Object ofNullableState(State<States, Events> s) {
+            private Object ofNullableState(org.springframework.statemachine.state.State<State, Event> s) {
                 return Optional.ofNullable(s)
-                        .map(State::getId)
+                        .map(org.springframework.statemachine.state.State::getId)
                         .orElse(null);
             }
         };
     }
 
     @Override
-    public void configure(StateMachineStateConfigurer<States, Events> states) throws Exception {
+    public void configure(StateMachineStateConfigurer<State, Event> states) throws Exception {
         states.withStates()
-                .initial(States.STARTED)
-                .states(new HashSet<>(Arrays.asList(States.values())));
+                .initial(State.STARTED)
+                .states(new HashSet<>(Arrays.asList(State.values())));
     }
 
     @Override
-    public void configure(StateMachineTransitionConfigurer<States, Events> transitions) throws Exception {
+    public void configure(StateMachineTransitionConfigurer<State, Event> transitions) throws Exception {
         transitions
                 .withExternal()
-                .source(States.STARTED)
-                .target(States.CATEGORY_PROCESSING)
-                .event(Events.FETCH_CATEGORIES)
+                .source(State.STARTED)
+                .target(State.CATEGORY_PROCESSING)
+                .event(Event.FETCH_CATEGORIES)
                 .action(fetchCategories())
                 .and()
                 .withExternal()
-                .source(States.STARTED)
-                .target(States.CATEGORY_PROCESSING)
-                .event(Events.STARTED_WITH_CATEGORY)
+                .source(State.STARTED)
+                .target(State.CATEGORY_PROCESSING)
+                .event(Event.STARTED_WITH_CATEGORY)
                 .action(fetchProductsByCategory())
                 .and()
                 .withExternal()
-                .source(States.CATEGORY_PROCESSING)
-                .target(States.MAKING_CSV_FILES)
-                .event(Events.PRODUCTS_FETCHED)
+                .source(State.CATEGORY_PROCESSING)
+                .target(State.MAKING_CSV_FILES)
+                .event(Event.PRODUCTS_FETCHED)
                 .and()
                 .withExternal()
-                .source(States.MAKING_CSV_FILES)
-                .target(States.CATEGORY_PROCESSING)
-                .event(Events.CATEGORIES_REMAINED)
+                .source(State.MAKING_CSV_FILES)
+                .target(State.CATEGORY_PROCESSING)
+                .event(Event.CATEGORIES_REMAINED)
                 .and()
                 .withExternal()
-                .source(States.MAKING_CSV_FILES)
-                .target(States.MAKING_ZIP_ARCHIVES)
-                .event(Events.FINISH_CSV_FILES)
+                .source(State.MAKING_CSV_FILES)
+                .target(State.MAKING_ZIP_ARCHIVES)
+                .event(Event.FINISH_CSV_FILES)
                 .and()
                 .withExternal()
-                .source(States.MAKING_ZIP_ARCHIVES)
-                .target(States.IDLE)
-                .event(Events.FINISH_ZIP_ARCHIVES)
+                .source(State.MAKING_ZIP_ARCHIVES)
+                .target(State.IDLE)
+                .event(Event.FINISH_ZIP_ARCHIVES)
                 .and()
                 .withInternal()
-                .source(States.IDLE)
-                .event(Events.SEND_EMAIL)
+                .source(State.IDLE)
+                .event(Event.SEND_EMAIL)
 //                .action(sendEmailToSubscribers())
         ;
     }
 
     @Bean
-    public Action<States, Events> fetchProductsByCategory() {
+    public Action<State, Event> fetchProductsByCategory() {
         return context -> {
             String category = context
                     .getExtendedState()
@@ -126,13 +125,13 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<States
             );
             StateMachineUtil.sendEventToSM(
                     context.getStateMachine(),
-                    Events.PRODUCTS_FETCHED
+                    Event.PRODUCTS_FETCHED
             );
         };
     }
 
     @Bean
-    public Action<States, Events> fetchCategories() {
+    public Action<State, Event> fetchCategories() {
         return context -> {
             List<String> categories = productApiService.fetchSortedCategories();
             StateMachineUtil.putVariableToSM(
@@ -142,7 +141,7 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<States
             );
             StateMachineUtil.sendEventToSM(
                     context.getStateMachine(),
-                    Events.FETCH_CATEGORIES
+                    Event.FETCH_CATEGORIES
             );
         };
     }

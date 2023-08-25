@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.clevertec.sm.service.StateMachineService;
-import ru.clevertec.sm.statemachine.Events;
-import ru.clevertec.sm.statemachine.States;
+import ru.clevertec.sm.statemachine.Event;
+import ru.clevertec.sm.statemachine.State;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,7 +34,7 @@ public class StateMachineController {
     }
 
     @GetMapping("/state")
-    public ResponseEntity<States> getCurrentState() {
+    public ResponseEntity<State> getCurrentState() {
         return ResponseEntity.ok(stateMachineService.getCurrentState());
     }
 
@@ -46,7 +45,10 @@ public class StateMachineController {
 
     @PostMapping("/fetch_categories")
     public ResponseEntity<String> fetchCategories() {
-        stateMachineService.sendEvent(Events.FETCH_CATEGORIES);
+        for(Event event : Event.values()) {
+            stateMachineService.sendEvent(event);
+        }
+
         return ResponseEntity.ok("sent");
     }
 }

@@ -1,7 +1,7 @@
 package ru.clevertec.sm.service;
 
-import ru.clevertec.sm.statemachine.Events;
-import ru.clevertec.sm.statemachine.States;
+import ru.clevertec.sm.statemachine.Event;
+import ru.clevertec.sm.statemachine.State;
 
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +12,7 @@ public interface StateMachineService {
 
     Map<?, ?> getVariables();
 
-    States getCurrentState();
+    State getCurrentState();
 
-    void sendEvent(Events event);
+    void sendEvent(Event event);
 }

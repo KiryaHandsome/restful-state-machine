@@ -4,13 +4,13 @@ import lombok.experimental.UtilityClass;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
 import reactor.core.publisher.Mono;
-import ru.clevertec.sm.statemachine.Events;
-import ru.clevertec.sm.statemachine.States;
+import ru.clevertec.sm.statemachine.Event;
+import ru.clevertec.sm.statemachine.State;
 
 @UtilityClass
 public class StateMachineUtil {
 
-    public static void sendEventToSM(StateMachine<States, Events> stateMachine, Events event) {
+    public static void sendEventToSM(StateMachine<State, Event> stateMachine, Event event) {
         stateMachine.sendEvent(Mono.just(
                         MessageBuilder
                                 .withPayload(event)
@@ -19,7 +19,7 @@ public class StateMachineUtil {
                 .subscribe();
     }
 
-    public static void putVariableToSM(StateMachine<States, Events> sm, Object key, Object value) {
+    public static void putVariableToSM(StateMachine<State, Event> sm, Object key, Object value) {
         sm.getExtendedState()
                 .getVariables()
                 .put(key, value);
