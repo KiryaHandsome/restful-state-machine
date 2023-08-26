@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.statemachine.StateMachine;
+import org.springframework.test.context.ActiveProfiles;
 import ru.clevertec.sm.util.StateMachineUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class StateMachineTest {
 
     @Autowired
@@ -88,3 +90,5 @@ public class StateMachineTest {
         assertThat(state).isEqualTo(State.IDLE);
     }
 }
+
+

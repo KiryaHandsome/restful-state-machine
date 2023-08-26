@@ -1,6 +1,7 @@
 package ru.clevertec.sm.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.iterators.SingletonIterator;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.util.SMConstants;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,23 +22,25 @@ public class StateMachineServiceImpl implements StateMachineService {
     private final StateMachine<State, Event> stateMachine;
 
     /**
-     * Starts state machine and send event {@link Event#FETCH_CATEGORIES} to it.
+     * Starts state machine.
+     * If category is present it will send {@link Event#MAKE_CSV_FILES},
+     * otherwise - {@link Event#FETCH_CATEGORIES}
      *
      * @param sendEmail should send email after completion or not
-     * @param category if present machine will process only it,
-     *                 otherwise machine will fetch categories
+     * @param category  if present machine will process only it,
+     *                  otherwise machine will fetch categories
      */
     @Override
     public void launch(boolean sendEmail, Optional<String> category) {
-        stateMachine.startReactively()
-                .doOnSuccess(ignored -> shouldSendEmail(sendEmail))
-                .subscribe();
+        stateMachine.startReactively().subscribe();
+        shouldSendEmail(sendEmail);
+        Event nextEvent = Event.FETCH_CATEGORIES;
         if (category.isPresent()) {
-            putVariableToSM(SMConstants.CURRENT_CATEGORY, category.get());
-            sendEvent(Event.FETCH_PRODUCTS);
-        } else {
-            sendEvent(Event.FETCH_CATEGORIES);
+            Iterator<String> categoryIterator = new SingletonIterator<>(category.get());
+            putVariableToSM(SMConstants.CURRENT_CATEGORY_ITERATOR, categoryIterator);
+            nextEvent = Event.MAKE_CSV_FILES;
         }
+        sendEvent(nextEvent);
     }
 
     @Override
