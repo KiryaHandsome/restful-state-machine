@@ -4,11 +4,15 @@
 
 STARTED --> CATEGORY_PROCESSING : request all categories
 
+STARTED --> MAKING_CSV_FILES : fetch products from passed category
+
 CATEGORY_PROCESSING --> MAKING_CSV_FILES : request products of current category
 
 MAKING_CSV_FILES --> CATEGORY_PROCESSING : categories are not over
 
-MAKING_CSV_FILES --> MAKING_ZIP_ARCHIVES : categories are over
+MAKING_CSV_FILES --> MAKING_CSV_FILES : make csv files
+
+MAKING_CSV_FILES --> MAKING_ZIP_ARCHIVES : make zip archives
 
 MAKING_ZIP_ARCHIVES --> IDLE : finish making archives
 

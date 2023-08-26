@@ -35,7 +35,7 @@ public class StateMachineTest {
 
     @Test
     void checkStateAfterFetchCategoriesShouldBeCategoryProcessing() {
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEvent(stateMachine, Event.FETCH_CATEGORIES);
 
         State state = stateMachine.getState().getId();
 
@@ -44,8 +44,8 @@ public class StateMachineTest {
 
     @Test
     void checkStateAfterFetchProductsShouldBeMakingCSVFiles() {
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
+        StateMachineUtil.sendEvent(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_CSV_FILES);
 
         State state = stateMachine.getState().getId();
 
@@ -54,9 +54,9 @@ public class StateMachineTest {
 
     @Test
     void checkStateAfterFinishCSVFilesShouldBeMakingZipArchives() {
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
+        StateMachineUtil.sendEvent(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_CSV_FILES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_ZIP_ARCHIVES);
 
         State state = stateMachine.getState().getId();
 
@@ -65,10 +65,10 @@ public class StateMachineTest {
 
     @Test
     void checkStateAfterFinishShouldBeIdle() {
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_ZIP_ARCHIVES);
+        StateMachineUtil.sendEvent(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_CSV_FILES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_ZIP_ARCHIVES);
+        StateMachineUtil.sendEvent(stateMachine, Event.FINISH_ZIP_ARCHIVES);
 
         State state = stateMachine.getState().getId();
 
@@ -77,11 +77,11 @@ public class StateMachineTest {
 
     @Test
     void checkStateSendEmailShouldBeIdle() {
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_ZIP_ARCHIVES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.SEND_EMAIL);
+        StateMachineUtil.sendEvent(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_CSV_FILES);
+        StateMachineUtil.sendEvent(stateMachine, Event.MAKE_ZIP_ARCHIVES);
+        StateMachineUtil.sendEvent(stateMachine, Event.FINISH_ZIP_ARCHIVES);
+        StateMachineUtil.sendEvent(stateMachine, Event.SEND_EMAIL);
 
         State state = stateMachine.getState().getId();
 

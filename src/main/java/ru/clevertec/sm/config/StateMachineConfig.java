@@ -18,7 +18,7 @@ import ru.clevertec.sm.dto.Product;
 import ru.clevertec.sm.service.ProductApiService;
 import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
-import ru.clevertec.sm.util.ProductsSMConstants;
+import ru.clevertec.sm.util.SMConstants;
 import ru.clevertec.sm.util.StateMachineUtil;
 
 import java.util.Arrays;
@@ -66,7 +66,14 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
     public void configure(StateMachineStateConfigurer<State, Event> states) throws Exception {
         states.withStates()
                 .initial(State.STARTED)
-                .states(new HashSet<>(Arrays.asList(State.values())));
+                .state(State.MAKING_CSV_FILES, makeCsvFiles())
+                .state(State.CATEGORY_PROCESSING, fetchProductsByCategory())
+                .state(State.MAKING_ZIP_ARCHIVES, makeZipArchives())
+                .state(State.IDLE);
+    }
+
+    private Action<State, Event> makeZipArchives() {
+        return null;
     }
 
     @Override
@@ -80,15 +87,13 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
                 .and()
                 .withExternal()
                 .source(State.STARTED)
-                .target(State.CATEGORY_PROCESSING)
+                .target(State.MAKING_CSV_FILES)
                 .event(Event.FETCH_PRODUCTS)
-                .action(fetchProductsByCategory())
                 .and()
                 .withExternal()
                 .source(State.CATEGORY_PROCESSING)
                 .target(State.MAKING_CSV_FILES)
-                .event(Event.MAKE_CSV_FILES)
-                .action(makeCsvFiles())
+                .event(Event.FETCH_PRODUCTS)
                 .and()
                 .withExternal()
                 .source(State.MAKING_CSV_FILES)
@@ -98,7 +103,7 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
                 .withExternal()
                 .source(State.MAKING_CSV_FILES)
                 .target(State.MAKING_ZIP_ARCHIVES)
-                .event(Event.FINISH_CSV_FILES)
+                .event(Event.MAKE_ZIP_ARCHIVES)
                 .and()
                 .withExternal()
                 .source(State.MAKING_ZIP_ARCHIVES)
@@ -115,42 +120,41 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
     @Bean
     public Action<State, Event> makeCsvFiles() {
         return context -> {
-            // TODO make service for this files and send event
-            //check
+            log.info("makeCsvFiles action");
+            // TODO make service for this files and send event to make zip archives
+            StateMachineUtil.sendEvent(context.getStateMachine(), Event.MAKE_ZIP_ARCHIVES);
         };
     }
 
     @Bean
     public Action<State, Event> fetchProductsByCategory() {
         return context -> {
+            log.info("fetchProductsByCategory action");
             String category = context.getExtendedState()
-                    .get(ProductsSMConstants.VARIABLE_CURRENT_CATEGORY, String.class);
+                    .get(SMConstants.CURRENT_CATEGORY, String.class);
+            log.info("Current category: {}", category);
             List<Product> products = productApiService.fetchProductsByCategory(category);
-            StateMachineUtil.putVariableToSM(
-                    context.getStateMachine(),
-                    ProductsSMConstants.VARIABLE_PRODUCTS_TO_PROCESS,
-                    products
-            );
-            StateMachineUtil.sendEventToSM(
-                    context.getStateMachine(),
-                    Event.MAKE_CSV_FILES
-            );
+            var stateMachine = context.getStateMachine();
+            StateMachineUtil.putVariable(stateMachine, SMConstants.PRODUCTS_TO_PROCESS, products);
+            log.info("send event make csv files");
         };
     }
 
     @Bean
     public Action<State, Event> fetchCategories() {
         return context -> {
+            log.info("fetchCategories action");
             List<String> categories = productApiService.fetchSortedCategories();
-            StateMachineUtil.putVariableToSM(
-                    context.getStateMachine(),
-                    ProductsSMConstants.VARIABLE_CATEGORIES,
-                    categories
+            var stateMachine = context.getStateMachine();
+            StateMachineUtil.putVariable(stateMachine, SMConstants.CATEGORIES, categories);
+            StateMachineUtil.putVariable(
+                    stateMachine,
+                    SMConstants.CURRENT_CATEGORY,
+                    categories.stream()
+                            .findFirst()
+                            .orElseThrow(RuntimeException::new) //TODO change to custom exception
             );
-            StateMachineUtil.sendEventToSM(
-                    context.getStateMachine(),
-                    Event.FETCH_PRODUCTS
-            );
+            StateMachineUtil.sendEvent(stateMachine, Event.FETCH_PRODUCTS);
         };
     }
 }

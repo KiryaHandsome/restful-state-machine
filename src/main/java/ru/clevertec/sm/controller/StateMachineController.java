@@ -14,6 +14,9 @@ import ru.clevertec.sm.statemachine.State;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Controller
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class StateMachineController {
 
     private final StateMachineService stateMachineService;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     @PostMapping("/start")
     public ResponseEntity<String> startSM(
@@ -29,7 +33,7 @@ public class StateMachineController {
             @RequestParam Optional<String> category
     ) {
         log.info("Starting State Machine. sendEmail={}, hasCategory={}", sendEmail, category.isPresent());
-        stateMachineService.launch(sendEmail, category);
+        executorService.submit(() -> stateMachineService.launch(sendEmail, category));
         return ResponseEntity.ok("State Machine started");
     }
 
@@ -47,7 +51,7 @@ public class StateMachineController {
 
     @PostMapping("/fetch_categories")
     public ResponseEntity<String> fetchCategories() {
-        for(Event event : Event.values()) {
+        for (Event event : Event.values()) {
             stateMachineService.sendEvent(event);
         }
 

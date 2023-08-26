@@ -20,12 +20,12 @@ class ProductApiServiceImplTest {
     @Test
     void checkFetchCategoriesShouldReturnNotEmptyList() {
         List<String> categories = productService.fetchSortedCategories();
-        assertThat(categories).containsAll(TestData.getCategoriesList());
+        assertThat(categories).containsAll(TestData.getCategories());
     }
 
     @Test
     void fetchProductsByCategory() {
-        var categories = TestData.getCategoriesList();
+        var categories = TestData.getCategories();
 
         for (String category : categories) {
             List<Product> products = productService.fetchProductsByCategory(category);

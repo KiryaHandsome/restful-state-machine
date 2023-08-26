@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 import ru.clevertec.sm.service.StateMachineService;
 import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
-import ru.clevertec.sm.util.ProductsSMConstants;
+import ru.clevertec.sm.util.SMConstants;
 
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +32,7 @@ public class StateMachineServiceImpl implements StateMachineService {
                 .doOnSuccess(ignored -> shouldSendEmail(sendEmail))
                 .subscribe();
         if (category.isPresent()) {
-            putVariableToSM(ProductsSMConstants.VARIABLE_CURRENT_CATEGORY, category.get());
+            putVariableToSM(SMConstants.CURRENT_CATEGORY, category.get());
             sendEvent(Event.FETCH_PRODUCTS);
         } else {
             sendEvent(Event.FETCH_CATEGORIES);
@@ -68,6 +68,6 @@ public class StateMachineServiceImpl implements StateMachineService {
     private void shouldSendEmail(boolean sendEmail) {
         stateMachine.getExtendedState()
                 .getVariables()
-                .put(ProductsSMConstants.VARIABLE_SEND_EMAIL, sendEmail);
+                .put(SMConstants.SEND_EMAIL, sendEmail);
     }
 }
