@@ -1,7 +1,7 @@
 productApi:
     baseUrl: https://dummyjson.com
-    categoryUri: ${productApi.baseUrl}/products/category/
-    categoriesUri: ${productApi.baseUrl}/products/categories
+    categoryUrl: ${productApi.baseUrl}/products/category/
+    categoriesUrl: ${productApi.baseUrl}/products/categories
 
 subscribers:
   emails:

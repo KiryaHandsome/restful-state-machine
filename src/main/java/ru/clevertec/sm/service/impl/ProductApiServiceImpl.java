@@ -10,39 +10,54 @@ import ru.clevertec.sm.service.ProductApiService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 public class ProductApiServiceImpl implements ProductApiService {
 
-    private final String baseUrl;
-    private final String categoriesUri;
+    private final String categoriesUrl;
     private final RestTemplate restTemplate;
-    private final String productsByCategoryUri;
+    private final String productsByCategoryUrl;
 
     public ProductApiServiceImpl(
             RestTemplate restTemplate,
-            @Value("${productApi.baseUrl}") String baseUrl,
-            @Value("${productApi.categoryUri}") String productsByCategoryUri,
-            @Value("${productApi.categoriesUri}") String categoriesUri
+            @Value("${productApi.categoryUrl}") String productsByCategoryUrl,
+            @Value("${productApi.categoriesUrl}") String categoriesUrl
     ) {
-        this.baseUrl = baseUrl;
         this.restTemplate = restTemplate;
-        this.categoriesUri = categoriesUri;
-        this.productsByCategoryUri = productsByCategoryUri;
+        this.categoriesUrl = categoriesUrl;
+        this.productsByCategoryUrl = productsByCategoryUrl;
     }
 
     @Override
     public List<String> fetchSortedCategories() {
-        String[] categories = restTemplate.getForObject(categoriesUri, String[].class);
-        return Arrays.stream(categories)
+        Optional<String[]> categories = Optional.ofNullable(
+                restTemplate.getForObject(
+                        categoriesUrl,
+                        String[].class
+                )
+        );
+
+        return categories
+                .map(Arrays::asList)
+                .orElseGet(Collections::emptyList)
+                .stream()
                 .sorted()
                 .toList();
     }
 
     @Override
     public List<Product> fetchProductsByCategory(String category) {
-        ProductResponse productResponse = restTemplate.getForObject(productsByCategoryUri + category, ProductResponse.class);
-        return productResponse != null ? productResponse.getProducts() : Collections.emptyList();
+        Optional<ProductResponse> productResponse = Optional.ofNullable(
+                restTemplate.getForObject(
+                        productsByCategoryUrl + category,
+                        ProductResponse.class
+                )
+        );
+
+        return productResponse
+                .map(ProductResponse::getProducts)
+                .orElse(Collections.emptyList());
     }
 }

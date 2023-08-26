@@ -28,11 +28,13 @@ public class StateMachineController {
             @RequestParam(defaultValue = "true") boolean sendEmail,
             @RequestParam Optional<String> category
     ) {
-        log.info("Starting State Machine. sendEmail={}", sendEmail);
+        log.info("Starting State Machine. sendEmail={}, hasCategory={}", sendEmail, category.isPresent());
         stateMachineService.launch(sendEmail, category);
         return ResponseEntity.ok("State Machine started");
     }
 
+
+    //*******************DEBUG ENDPOINTS*********************
     @GetMapping("/state")
     public ResponseEntity<State> getCurrentState() {
         return ResponseEntity.ok(stateMachineService.getCurrentState());

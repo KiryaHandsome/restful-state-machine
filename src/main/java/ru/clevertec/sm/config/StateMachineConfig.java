@@ -81,13 +81,14 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
                 .withExternal()
                 .source(State.STARTED)
                 .target(State.CATEGORY_PROCESSING)
-                .event(Event.STARTED_WITH_CATEGORY)
+                .event(Event.FETCH_PRODUCTS)
                 .action(fetchProductsByCategory())
                 .and()
                 .withExternal()
                 .source(State.CATEGORY_PROCESSING)
                 .target(State.MAKING_CSV_FILES)
-                .event(Event.PRODUCTS_FETCHED)
+                .event(Event.MAKE_CSV_FILES)
+                .action(makeCsvFiles())
                 .and()
                 .withExternal()
                 .source(State.MAKING_CSV_FILES)
@@ -112,10 +113,17 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
     }
 
     @Bean
+    public Action<State, Event> makeCsvFiles() {
+        return context -> {
+            // TODO make service for this files and send event
+            //check
+        };
+    }
+
+    @Bean
     public Action<State, Event> fetchProductsByCategory() {
         return context -> {
-            String category = context
-                    .getExtendedState()
+            String category = context.getExtendedState()
                     .get(ProductsSMConstants.VARIABLE_CURRENT_CATEGORY, String.class);
             List<Product> products = productApiService.fetchProductsByCategory(category);
             StateMachineUtil.putVariableToSM(
@@ -125,7 +133,7 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
             );
             StateMachineUtil.sendEventToSM(
                     context.getStateMachine(),
-                    Event.PRODUCTS_FETCHED
+                    Event.MAKE_CSV_FILES
             );
         };
     }
@@ -141,7 +149,7 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
             );
             StateMachineUtil.sendEventToSM(
                     context.getStateMachine(),
-                    Event.FETCH_CATEGORIES
+                    Event.FETCH_PRODUCTS
             );
         };
     }

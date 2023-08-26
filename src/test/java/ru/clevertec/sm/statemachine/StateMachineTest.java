@@ -34,15 +34,6 @@ public class StateMachineTest {
     }
 
     @Test
-    void checkStateAfterStartWithCategoryShouldBeCategoryProcessing() {
-        StateMachineUtil.sendEventToSM(stateMachine, Event.STARTED_WITH_CATEGORY);
-
-        State state = stateMachine.getState().getId();
-
-        assertThat(state).isEqualTo(State.CATEGORY_PROCESSING);
-    }
-
-    @Test
     void checkStateAfterFetchCategoriesShouldBeCategoryProcessing() {
         StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
 
@@ -54,7 +45,7 @@ public class StateMachineTest {
     @Test
     void checkStateAfterFetchProductsShouldBeMakingCSVFiles() {
         StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.PRODUCTS_FETCHED);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
 
         State state = stateMachine.getState().getId();
 
@@ -64,7 +55,7 @@ public class StateMachineTest {
     @Test
     void checkStateAfterFinishCSVFilesShouldBeMakingZipArchives() {
         StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.PRODUCTS_FETCHED);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
         StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
 
         State state = stateMachine.getState().getId();
@@ -75,9 +66,22 @@ public class StateMachineTest {
     @Test
     void checkStateAfterFinishShouldBeIdle() {
         StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
-        StateMachineUtil.sendEventToSM(stateMachine, Event.PRODUCTS_FETCHED);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
         StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
         StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_ZIP_ARCHIVES);
+
+        State state = stateMachine.getState().getId();
+
+        assertThat(state).isEqualTo(State.IDLE);
+    }
+
+    @Test
+    void checkStateSendEmailShouldBeIdle() {
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FETCH_CATEGORIES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.MAKE_CSV_FILES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_CSV_FILES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.FINISH_ZIP_ARCHIVES);
+        StateMachineUtil.sendEventToSM(stateMachine, Event.SEND_EMAIL);
 
         State state = stateMachine.getState().getId();
 

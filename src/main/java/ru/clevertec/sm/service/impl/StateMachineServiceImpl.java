@@ -22,8 +22,9 @@ public class StateMachineServiceImpl implements StateMachineService {
     /**
      * Starts state machine and send event {@link Event#FETCH_CATEGORIES} to it.
      *
-     * @param sendEmail
-     * @param category
+     * @param sendEmail should send email after completion or not
+     * @param category if present machine will process only it,
+     *                 otherwise machine will fetch categories
      */
     @Override
     public void launch(boolean sendEmail, Optional<String> category) {
@@ -32,15 +33,9 @@ public class StateMachineServiceImpl implements StateMachineService {
                 .subscribe();
         if (category.isPresent()) {
             putVariableToSM(ProductsSMConstants.VARIABLE_CURRENT_CATEGORY, category.get());
-            sendEvent(Event.STARTED_WITH_CATEGORY);
+            sendEvent(Event.FETCH_PRODUCTS);
         } else {
-            stateMachine.sendEvent(Mono.just(
-                            MessageBuilder
-                                    .withPayload(Event.FETCH_CATEGORIES)
-                                    .build()
-                    ))
-                    .subscribe();
-//            sendEvent(Events.FETCH_CATEGORIES);
+            sendEvent(Event.FETCH_CATEGORIES);
         }
     }
 
@@ -73,6 +68,6 @@ public class StateMachineServiceImpl implements StateMachineService {
     private void shouldSendEmail(boolean sendEmail) {
         stateMachine.getExtendedState()
                 .getVariables()
-                .put("sendEmail", sendEmail);
+                .put(ProductsSMConstants.VARIABLE_SEND_EMAIL, sendEmail);
     }
 }
