@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.clevertec.sm.dto.Product;
 import ru.clevertec.sm.service.CsvService;
+import ru.clevertec.sm.util.ServiceConstants;
 import ru.clevertec.sm.util.TestData;
 
 import java.io.File;
@@ -31,8 +32,8 @@ class CsvServiceImplTest {
 
         for(var entry : brandsAndProducts.entrySet()) {
             String brand = entry.getKey();
-            String folderPath = CsvServiceImpl.OUTPUT_PATH + File.separator + brand;
-            String filePath = folderPath + File.separator + category + CsvServiceImpl.CSV_EXTENSION;
+            String folderPath = ServiceConstants.OUTPUT_PATH + File.separator + brand;
+            String filePath = folderPath + File.separator + category + ServiceConstants.CSV_EXTENSION;
             Assertions.assertThat(new File(folderPath)).isDirectory();
             Assertions.assertThat(new File(filePath)).isFile();
         }

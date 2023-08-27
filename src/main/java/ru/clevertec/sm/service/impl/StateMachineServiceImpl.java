@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import ru.clevertec.sm.service.StateMachineService;
 import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
-import ru.clevertec.sm.util.SMConstants;
+import ru.clevertec.sm.util.ServiceConstants;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class StateMachineServiceImpl implements StateMachineService {
         Event nextEvent = Event.FETCH_CATEGORIES;
         if (category.isPresent()) {
             Iterator<String> categoryIterator = new SingletonIterator<>(category.get());
-            putVariableToSM(SMConstants.CURRENT_CATEGORY_ITERATOR, categoryIterator);
+            putVariableToSM(ServiceConstants.CURRENT_CATEGORY_ITERATOR, categoryIterator);
             nextEvent = Event.MAKE_CSV_FILES;
         }
         sendEvent(nextEvent);
@@ -72,6 +72,6 @@ public class StateMachineServiceImpl implements StateMachineService {
     private void shouldSendEmail(boolean sendEmail) {
         stateMachine.getExtendedState()
                 .getVariables()
-                .put(SMConstants.SEND_EMAIL, sendEmail);
+                .put(ServiceConstants.SEND_EMAIL, sendEmail);
     }
 }

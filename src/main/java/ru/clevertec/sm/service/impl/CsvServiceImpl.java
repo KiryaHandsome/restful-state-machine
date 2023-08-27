@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.clevertec.sm.dto.Product;
 import ru.clevertec.sm.service.CsvService;
+import ru.clevertec.sm.util.ServiceConstants;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,8 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class CsvServiceImpl implements CsvService {
 
-    public static final String CSV_EXTENSION = ".csv";
-    public static final String OUTPUT_PATH = "resource/result";
+
     private static final String[] HEADER_ROW = {
             "ID",
             "Title",
@@ -53,25 +53,29 @@ public class CsvServiceImpl implements CsvService {
             String filePath = buildFilePath(folderPath, category);
             createFolderIfItDoesntExist(folderPath);
             createFileIfItDoesntExist(filePath);
-            try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
-                writer.writeNext(HEADER_ROW);
-                for (Product product : entry.getValue()) {
-                    String[] data = mapProductToCsvData(product);
-                    writer.writeNext(data);
-                }
-                log.info("CSV file \"{}\" created successfully", filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
+            writeProductsToFile(filePath, entry.getValue());
+        }
+    }
+
+    private void writeProductsToFile(String filePath, List<Product> products) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
+            writer.writeNext(HEADER_ROW);
+            for (Product product : products) {
+                String[] data = mapProductToCsvData(product);
+                writer.writeNext(data);
             }
+            log.info("CSV file \"{}\" created successfully", filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private String buildFilePath(String folderPath, String category) {
-        return folderPath + File.separator + category + CSV_EXTENSION;
+        return folderPath + File.separator + category + ServiceConstants.CSV_EXTENSION;
     }
 
     private String buildFolderPath(String brand) {
-        return OUTPUT_PATH + File.separator + brand;
+        return ServiceConstants.OUTPUT_PATH + File.separator + brand;
     }
 
     @SneakyThrows
@@ -106,5 +110,4 @@ public class CsvServiceImpl implements CsvService {
                 product.getCategory()
         };
     }
-
 }

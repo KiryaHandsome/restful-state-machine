@@ -8,7 +8,7 @@ import ru.clevertec.sm.service.CsvService;
 import ru.clevertec.sm.service.ProductApiService;
 import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
-import ru.clevertec.sm.util.SMConstants;
+import ru.clevertec.sm.util.ServiceConstants;
 import ru.clevertec.sm.util.StateMachineUtil;
 
 import java.util.Iterator;
@@ -23,7 +23,7 @@ public class MakeCsvFilesAction implements Action<State, Event> {
     @Override
     public void execute(StateContext<State, Event> context) {
         Iterator<String> categoryIter = context.getExtendedState()
-                .get(SMConstants.CURRENT_CATEGORY_ITERATOR, Iterator.class);
+                .get(ServiceConstants.CURRENT_CATEGORY_ITERATOR, Iterator.class);
         Event nextEvent = Event.MAKE_ZIP_ARCHIVES;
         if (categoryIter.hasNext()) {
             String category = categoryIter.next();

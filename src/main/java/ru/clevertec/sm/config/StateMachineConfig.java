@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.Message;
-import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
@@ -13,14 +11,12 @@ import org.springframework.statemachine.config.builders.StateMachineStateConfigu
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 import org.springframework.statemachine.guard.Guard;
 import org.springframework.statemachine.listener.StateMachineListener;
-import org.springframework.statemachine.listener.StateMachineListenerAdapter;
-import org.springframework.statemachine.transition.Transition;
 import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.statemachine.action.FetchCategoriesAction;
 import ru.clevertec.sm.statemachine.action.MakeCsvFilesAction;
 import ru.clevertec.sm.statemachine.action.MakeZipArchiveAction;
-import ru.clevertec.sm.util.SMConstants;
+import ru.clevertec.sm.util.ServiceConstants;
 
 import java.util.Optional;
 
@@ -97,8 +93,8 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
     Guard<State, Event> shouldSendEmail() {
         return context -> Optional.ofNullable(
                         context.getExtendedState()
-                                .get(SMConstants.SEND_EMAIL, Boolean.class)
+                                .get(ServiceConstants.SEND_EMAIL, Boolean.class)
                 )
-                .orElse(SMConstants.SEND_EMAIL_DEFAULT);
+                .orElse(ServiceConstants.SEND_EMAIL_DEFAULT);
     }
 }
