@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Controller
@@ -36,7 +35,6 @@ public class StateMachineController {
         executorService.submit(() -> stateMachineService.launch(sendEmail, category));
         return ResponseEntity.ok("State Machine started");
     }
-
 
     //*******************DEBUG ENDPOINTS*********************
     @GetMapping("/state")

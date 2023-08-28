@@ -7,4 +7,5 @@ public interface ServiceConstants {
     String OUTPUT_PATH = "resource/result";
     String CSV_EXTENSION = ".csv";
     String ZIP_EXTENSION = ".zip";
+    String GENERATED_ARCHIVES_AND_FILES = "generatedArchivesAndFiles";
 }

@@ -27,7 +27,7 @@ class CsvServiceImplTest {
         List<Product> smartphones = TestData.getSmartphones();
         Map<String, List<Product>> brandsAndProducts = smartphones.stream()
                 .collect(Collectors.groupingBy(Product::getBrand));
-        String category = "smartphones";
+        String category = TestData.SMARTPHONES;
         csvService.writeProductsToCSV(smartphones, category);
 
         for(var entry : brandsAndProducts.entrySet()) {

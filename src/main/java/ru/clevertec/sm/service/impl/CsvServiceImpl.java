@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class CsvServiceImpl implements CsvService {
 
-
     private static final String[] HEADER_ROW = {
             "ID",
             "Title",

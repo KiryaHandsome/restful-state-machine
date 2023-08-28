@@ -16,6 +16,7 @@ import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.statemachine.action.FetchCategoriesAction;
 import ru.clevertec.sm.statemachine.action.MakeCsvFilesAction;
 import ru.clevertec.sm.statemachine.action.MakeZipArchiveAction;
+import ru.clevertec.sm.statemachine.action.SendEmailAction;
 import ru.clevertec.sm.util.ServiceConstants;
 
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
     private final MakeZipArchiveAction makeZipArchivesAction;
     private final StateMachineListener<State, Event> listener;
     private final FetchCategoriesAction fetchCategoriesAction;
+    private final SendEmailAction sendEmailAction;
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<State, Event> config) throws Exception {
@@ -75,18 +77,13 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
                 .source(State.MAKING_ZIP_ARCHIVES)
                 .target(State.IDLE)
                 .event(Event.FINISH_ZIP_ARCHIVES)
+                .action(sendEmailAction)
+                .guard(shouldSendEmail())
                 .and()
                 .withInternal()
                 .source(State.MAKING_CSV_FILES)
                 .event(Event.MAKE_CSV_FILES)
-                .action(makeCsvFilesAction)
-                .and()
-                .withInternal()
-                .source(State.IDLE)
-                .event(Event.SEND_EMAIL)
-                .guard(shouldSendEmail())
-//                .action(sendEmailToSubscribers())
-        ;
+                .action(makeCsvFilesAction);
     }
 
     @Bean

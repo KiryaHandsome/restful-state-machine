@@ -47,13 +47,13 @@ public class ZipServiceImpl implements ZipService {
      * @return list of files added to zip archive
      */
     private Optional<Map.Entry<String, List<String>>> createZipArchive(File brandFolder) {
-        String archiveName = buildZipArchiveName(brandFolder.getName());
-        File archive = new File(archiveName);
+        String archivePath = buildZipArchivePath(brandFolder.getName());
+        File archive = new File(archivePath);
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(archive))) {
             List<String> namesOfFiles = addFilesToZip(brandFolder, zipOutputStream);
-            return Optional.of(Map.entry(archiveName, namesOfFiles));
+            return Optional.of(Map.entry(archive.getName(), namesOfFiles));
         } catch (IOException e) {
-            log.error("Couldn't create zip archive: {}", archiveName);
+            log.error("Couldn't create zip archive: {}", archivePath);
             return Optional.empty();
         }
     }
@@ -88,7 +88,7 @@ public class ZipServiceImpl implements ZipService {
         return Optional.empty();
     }
 
-    private String buildZipArchiveName(String fileName) {
+    private String buildZipArchivePath(String fileName) {
         return ServiceConstants.OUTPUT_PATH + File.separator +
                 fileName + ServiceConstants.ZIP_EXTENSION;
     }
