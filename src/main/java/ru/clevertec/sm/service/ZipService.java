@@ -1,6 +1,9 @@
 package ru.clevertec.sm.service;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ZipService {
 
-    void createArchives();
+    Map<String, List<String>> createArchives();
 }
