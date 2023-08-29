@@ -24,14 +24,22 @@ public class SendEmailAction implements Action<State, Event> {
 
     @Override
     public void execute(StateContext<State, Event> context) {
-        log.info("Send email action");
         String[] subscribersEmails = emailSubscribersProps
                 .getEmails()
                 .toArray(new String[0]);
-        StringBuilder messageText = new StringBuilder();
-        messageText.append("Generated archives and files:\n");
         Map<String, List<String>> archivesAndFiles = context.getExtendedState()
                 .get(ServiceConstants.GENERATED_ARCHIVES_AND_FILES, Map.class);
+        String messageText = buildMessageText(archivesAndFiles);
+        emailService.sendEmailToSubscribers(
+                subscribersEmails,
+                EMAIL_SUBJECT,
+                messageText
+        );
+    }
+
+    private String buildMessageText(Map<String, List<String>> archivesAndFiles) {
+        StringBuilder messageText = new StringBuilder();
+        messageText.append("Generated archives and files:\n");
         for (var entry : archivesAndFiles.entrySet()) {
             messageText
                     .append(entry.getKey())
@@ -43,10 +51,7 @@ public class SendEmailAction implements Action<State, Event> {
                         .append("\n");
             }
         }
-        emailService.sendEmailToSubscribers(
-                subscribersEmails,
-                EMAIL_SUBJECT,
-                messageText.toString()
-        );
+
+        return messageText.toString();
     }
 }

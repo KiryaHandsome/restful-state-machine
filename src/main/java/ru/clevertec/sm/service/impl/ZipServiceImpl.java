@@ -2,6 +2,7 @@ package ru.clevertec.sm.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.clevertec.sm.exception.IsNotDirectoryException;
 import ru.clevertec.sm.service.ZipService;
 import ru.clevertec.sm.util.ServiceConstants;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -21,56 +23,41 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class ZipServiceImpl implements ZipService {
 
-    /**
-     * Creates zip archives in {@link ServiceConstants#OUTPUT_PATH} folder
-     *
-     * @return map with zip archive name as a key
-     * and list of files names inside this archive
-     */
     @Override
-    public Map<String, List<String>> createArchives() {
-        Map<String, List<String>> zipNameAndNamesOfFiles = new HashMap<>();
-        File sourceDir = new File(ServiceConstants.OUTPUT_PATH);
-        Optional<File[]> brandFolders = Optional.ofNullable(sourceDir.listFiles(File::isDirectory));
-        for (File brandFolder : brandFolders.orElse(new File[0])) {
-            createZipArchive(brandFolder)
-                    .ifPresent(e -> zipNameAndNamesOfFiles.put(e.getKey(), e.getValue()));
-        }
+    public Optional<Map.Entry<String, List<String>>> createArchive(File folder, String filesExtension) {
+        if (!folder.isDirectory())
+            throw new IsNotDirectoryException("Passed file object is not folder: " + folder.getName());
 
-        return zipNameAndNamesOfFiles;
-    }
-
-    /**
-     * Creates zip archive for csv files in brand folder
-     *
-     * @param brandFolder folder to create zip archive
-     * @return list of files added to zip archive
-     */
-    private Optional<Map.Entry<String, List<String>>> createZipArchive(File brandFolder) {
-        String archivePath = buildZipArchivePath(brandFolder.getName());
+        List<File> files = retrieveFilesWithExtension(folder, filesExtension);
+        String archivePath = folder.getPath() + ServiceConstants.ZIP_EXTENSION;
         File archive = new File(archivePath);
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(archive))) {
-            List<String> namesOfFiles = addFilesToZip(brandFolder, zipOutputStream);
-            return Optional.of(Map.entry(archive.getName(), namesOfFiles));
-        } catch (IOException e) {
-            log.error("Couldn't create zip archive: {}", archivePath);
-            return Optional.empty();
-        }
+
+        return writeFilesToArchive(archive, folder, files);
     }
 
-    private List<String> addFilesToZip(File brandFolder, ZipOutputStream zipOutputStream) throws IOException {
-        List<String> createdFileNames = new ArrayList<>();
-        for (File file : brandFolder.listFiles()) {
-            if (file.getName().endsWith(ServiceConstants.CSV_EXTENSION)) {
-                String relativePath = brandFolder.toURI().relativize(file.toURI()).getPath();
+    private List<File> retrieveFilesWithExtension(File folder, String extension) {
+        return Optional.ofNullable(folder.listFiles())
+                .stream()
+                .flatMap(Stream::of)
+                .filter(f -> f.isFile() && f.getName().endsWith(extension))
+                .toList();
+    }
+
+    private Optional<Map.Entry<String, List<String>>> writeFilesToArchive(File archive, File folder, List<File> files) {
+        List<String> filesAddedToArchive = new ArrayList<>();
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(archive))) {
+            for (File file : files) {
+                String relativePath = folder.toURI().relativize(file.toURI()).getPath();
                 zipOutputStream.putNextEntry(new ZipEntry(relativePath));
                 writeFileToZipStream(file, zipOutputStream)
-                        .ifPresent(createdFileNames::add);
+                        .ifPresent(filesAddedToArchive::add);
                 zipOutputStream.closeEntry();
             }
+            return Optional.of(Map.entry(archive.getName(), filesAddedToArchive));
+        } catch (IOException e) {
+            log.error("Couldn't create zip archive: {}", archive.getName());
+            return Optional.empty();
         }
-
-        return createdFileNames;
     }
 
     private Optional<String> writeFileToZipStream(File file, ZipOutputStream zipOutputStream) {
@@ -86,10 +73,5 @@ public class ZipServiceImpl implements ZipService {
         }
 
         return Optional.empty();
-    }
-
-    private String buildZipArchivePath(String fileName) {
-        return ServiceConstants.OUTPUT_PATH + File.separator +
-                fileName + ServiceConstants.ZIP_EXTENSION;
     }
 }

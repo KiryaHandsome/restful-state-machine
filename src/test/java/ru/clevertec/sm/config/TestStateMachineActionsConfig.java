@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import ru.clevertec.sm.statemachine.action.FetchCategoriesAction;
 import ru.clevertec.sm.statemachine.action.MakeCsvFilesAction;
-import ru.clevertec.sm.statemachine.action.MakeZipArchiveAction;
+import ru.clevertec.sm.statemachine.action.MakeZipArchivesAction;
 import ru.clevertec.sm.statemachine.action.SendEmailAction;
 import ru.clevertec.sm.util.action.FakeFetchCategoriesAction;
 import ru.clevertec.sm.util.action.FakeMakeCsvFilesAction;
@@ -27,7 +27,7 @@ public class TestStateMachineActionsConfig {
     }
 
     @Bean
-    public MakeZipArchiveAction makeZipArchive() {
+    public MakeZipArchivesAction makeZipArchive() {
         return new FakeMakeZipArchivesAction();
     }
 

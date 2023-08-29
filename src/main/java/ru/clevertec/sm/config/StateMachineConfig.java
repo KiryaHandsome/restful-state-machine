@@ -15,7 +15,7 @@ import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.statemachine.action.FetchCategoriesAction;
 import ru.clevertec.sm.statemachine.action.MakeCsvFilesAction;
-import ru.clevertec.sm.statemachine.action.MakeZipArchiveAction;
+import ru.clevertec.sm.statemachine.action.MakeZipArchivesAction;
 import ru.clevertec.sm.statemachine.action.SendEmailAction;
 import ru.clevertec.sm.util.ServiceConstants;
 
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State, Event> {
 
     private final MakeCsvFilesAction makeCsvFilesAction;
-    private final MakeZipArchiveAction makeZipArchivesAction;
+    private final MakeZipArchivesAction makeZipArchivesAction;
     private final StateMachineListener<State, Event> listener;
     private final FetchCategoriesAction fetchCategoriesAction;
     private final SendEmailAction sendEmailAction;

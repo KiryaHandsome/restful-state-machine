@@ -9,7 +9,7 @@ import ru.clevertec.sm.service.ProductApiService;
 import ru.clevertec.sm.service.ZipService;
 import ru.clevertec.sm.statemachine.action.FetchCategoriesAction;
 import ru.clevertec.sm.statemachine.action.MakeCsvFilesAction;
-import ru.clevertec.sm.statemachine.action.MakeZipArchiveAction;
+import ru.clevertec.sm.statemachine.action.MakeZipArchivesAction;
 import ru.clevertec.sm.statemachine.action.SendEmailAction;
 
 @Profile("!test")
@@ -32,8 +32,8 @@ public class StateMachineActionsConfig {
     }
 
     @Bean
-    public MakeZipArchiveAction makeZipArchiveAction(ZipService zipService) {
-        return new MakeZipArchiveAction(zipService);
+    public MakeZipArchivesAction makeZipArchiveAction(ZipService zipService) {
+        return new MakeZipArchivesAction(zipService);
     }
 
     @Bean

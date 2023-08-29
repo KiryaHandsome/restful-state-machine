@@ -13,6 +13,7 @@ import java.util.List;
 public class TestData {
 
     public static final String SMARTPHONES = "smartphones";
+    public static final String APPLE = "Apple";
     public static ObjectMapper objectMapper = new ObjectMapper();
 
     @SneakyThrows
