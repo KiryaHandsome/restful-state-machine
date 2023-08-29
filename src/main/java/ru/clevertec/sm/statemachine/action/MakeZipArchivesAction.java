@@ -3,6 +3,7 @@ package ru.clevertec.sm.statemachine.action;
 import lombok.RequiredArgsConstructor;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
+import ru.clevertec.sm.aspect.TimeProfilingAspect;
 import ru.clevertec.sm.service.ZipService;
 import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 public class MakeZipArchivesAction implements Action<State, Event> {
 
     private final ZipService zipService;
+    private final TimeProfilingAspect profilingAspect;
 
     @Override
     public void execute(StateContext<State, Event> context) {
@@ -30,12 +32,14 @@ public class MakeZipArchivesAction implements Action<State, Event> {
             zipService.createArchive(folder, ServiceConstants.CSV_EXTENSION)
                     .ifPresent(e -> archivesAndFilesNames.put(e.getKey(), e.getValue()));
         }
+        var stateMachine = context.getStateMachine();
         StateMachineUtil.putVariable(
-                context.getStateMachine(),
+                stateMachine,
                 ServiceConstants.GENERATED_ARCHIVES_AND_FILES,
                 archivesAndFilesNames
         );
-        StateMachineUtil.sendEvent(context.getStateMachine(), Event.FINISH_ZIP_ARCHIVES);
+        StateMachineUtil.putVariable(stateMachine, ServiceConstants.CREATION_REPORT, profilingAspect.getReportBuilder());
+        StateMachineUtil.sendEvent(stateMachine, Event.FINISH_ZIP_ARCHIVES);
     }
 
     private List<File> extractDirectories(File folder) {

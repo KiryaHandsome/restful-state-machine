@@ -12,5 +12,5 @@ public interface CsvService {
      * @param data          list of rows to write
      * @throws RuntimeException if writing went wrong
      */
-    void writeDataToCsv(String directoryPath, String fileName, List<String[]> data);
+    String writeDataToCsv(String directoryPath, String fileName, List<String[]> data);
 }

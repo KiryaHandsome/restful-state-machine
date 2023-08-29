@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.clevertec.sm.service.StateMachineService;
-import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,23 +34,15 @@ public class StateMachineController {
         return ResponseEntity.ok("State Machine started");
     }
 
-    //*******************DEBUG ENDPOINTS*********************
+    @GetMapping("/info")
+    public ResponseEntity<String> getInfoAboutFilesCreation() {
+        String report = stateMachineService.buildReport();
+        return ResponseEntity.ok(report);
+    }
+
     @GetMapping("/state")
     public ResponseEntity<State> getCurrentState() {
-        return ResponseEntity.ok(stateMachineService.getCurrentState());
-    }
-
-    @GetMapping("/variables")
-    public ResponseEntity<Map<?, ?>> getVariables() {
-        return ResponseEntity.ok(stateMachineService.getVariables());
-    }
-
-    @PostMapping("/fetch_categories")
-    public ResponseEntity<String> fetchCategories() {
-        for (Event event : Event.values()) {
-            stateMachineService.sendEvent(event);
-        }
-
-        return ResponseEntity.ok("sent");
+        State state = stateMachineService.getCurrentState();
+        return ResponseEntity.ok(state);
     }
 }

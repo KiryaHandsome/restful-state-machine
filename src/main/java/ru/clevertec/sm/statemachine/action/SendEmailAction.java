@@ -30,7 +30,7 @@ public class SendEmailAction implements Action<State, Event> {
         Map<String, List<String>> archivesAndFiles = context.getExtendedState()
                 .get(ServiceConstants.GENERATED_ARCHIVES_AND_FILES, Map.class);
         String messageText = buildMessageText(archivesAndFiles);
-        emailService.sendEmailToSubscribers(
+        emailService.sendEmailToConsumers(
                 subscribersEmails,
                 EMAIL_SUBJECT,
                 messageText

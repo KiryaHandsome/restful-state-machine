@@ -3,10 +3,10 @@ package ru.clevertec.sm.service.impl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.clevertec.sm.dto.Product;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.clevertec.sm.service.CsvService;
 import ru.clevertec.sm.util.ServiceConstants;
-import ru.clevertec.sm.util.TestData;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,17 +15,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SpringBootTest
 class CsvServiceImplTest {
 
+    @Autowired
     private CsvService csvService;
 
     @BeforeEach
     void setUp() {
-        csvService = new CsvServiceImpl();
     }
 
     @Test

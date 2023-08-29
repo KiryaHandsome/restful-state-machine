@@ -19,7 +19,7 @@ public class CsvServiceImpl implements CsvService {
 
     @Override
     @SneakyThrows
-    public void writeDataToCsv(String directoryPath, String fileName, List<String[]> data) {
+    public String writeDataToCsv(String directoryPath, String fileName, List<String[]> data) {
         Path filePath = Paths.get(directoryPath, fileName + ServiceConstants.CSV_EXTENSION);
         if (!Files.exists(filePath)) {
             Files.createDirectories(filePath.getParent());
@@ -30,6 +30,7 @@ public class CsvServiceImpl implements CsvService {
                 writer.writeNext(row);
             }
         }
-        log.info("Csv file {} created successfully", filePath);
+
+        return filePath.getFileName().toString();
     }
 }

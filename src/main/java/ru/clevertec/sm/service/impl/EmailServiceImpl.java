@@ -18,7 +18,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @SneakyThrows
-    public void sendEmailToSubscribers(String[] consumersEmails, String subject, String text) {
+    public void sendEmailToConsumers(String[] consumersEmails, String subject, String text) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(consumersEmails);

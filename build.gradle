@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.1.2'
+    id 'org.springframework.boot' version '3.1.3'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
@@ -23,13 +23,16 @@ repositories {
 
 ext {
     set('testcontainersVersion', "1.18.3")
+    set('opencsvVersion', "5.8")
+    set('statemachineStarterVersion', "3.2.1")
 }
 
 dependencies {
+    implementation "com.opencsv:opencsv:${opencsvVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.opencsv:opencsv:5.8'
-    implementation 'org.springframework.statemachine:spring-statemachine-starter:3.2.1'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation "org.springframework.statemachine:spring-statemachine-starter:${statemachineStarterVersion}"
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'

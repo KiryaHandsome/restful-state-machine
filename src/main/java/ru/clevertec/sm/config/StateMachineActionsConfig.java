@@ -3,6 +3,7 @@ package ru.clevertec.sm.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import ru.clevertec.sm.aspect.TimeProfilingAspect;
 import ru.clevertec.sm.service.CsvService;
 import ru.clevertec.sm.service.EmailService;
 import ru.clevertec.sm.service.ProductApiService;
@@ -32,8 +33,11 @@ public class StateMachineActionsConfig {
     }
 
     @Bean
-    public MakeZipArchivesAction makeZipArchiveAction(ZipService zipService) {
-        return new MakeZipArchivesAction(zipService);
+    public MakeZipArchivesAction makeZipArchiveAction(
+            ZipService zipService,
+            TimeProfilingAspect profilingAspect
+    ) {
+        return new MakeZipArchivesAction(zipService, profilingAspect);
     }
 
     @Bean

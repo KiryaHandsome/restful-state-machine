@@ -12,7 +12,6 @@ import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.util.ServiceConstants;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -44,14 +43,22 @@ public class StateMachineServiceImpl implements StateMachineService {
     }
 
     @Override
-    public Map<?, ?> getVariables() {
+    public Object getVariable(Object key) {
         return stateMachine.getExtendedState()
-                .getVariables();
+                .getVariables()
+                .get(key);
     }
 
     @Override
     public State getCurrentState() {
         return stateMachine.getState().getId();
+    }
+
+    @Override
+    public String buildReport() {
+        return stateMachine.getExtendedState()
+                .get(ServiceConstants.CREATION_REPORT, StringBuilder.class)
+                .toString();
     }
 
     private void putVariableToSM(Object key, Object value) {
@@ -60,7 +67,7 @@ public class StateMachineServiceImpl implements StateMachineService {
                 .put(key, value);
     }
 
-    public void sendEvent(Event event) {
+    private void sendEvent(Event event) {
         stateMachine.sendEvent(Mono.just(
                         MessageBuilder
                                 .withPayload(event)
