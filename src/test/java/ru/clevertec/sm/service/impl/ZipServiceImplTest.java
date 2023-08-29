@@ -7,8 +7,6 @@ import ru.clevertec.sm.util.TestData;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ZipServiceImplTest {
 
 

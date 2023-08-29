@@ -1,10 +1,16 @@
 package ru.clevertec.sm.service;
 
-import ru.clevertec.sm.dto.Product;
-
 import java.util.List;
 
 public interface CsvService {
 
-    void writeProductsToCSV(List<Product> productsToWrite, String category);
+    /**
+     * Writes data to csv file.
+     *
+     * @param directoryPath location of directory
+     * @param fileName      fileName without extension
+     * @param data          list of rows to write
+     * @throws RuntimeException if writing went wrong
+     */
+    void writeDataToCsv(String directoryPath, String fileName, List<String[]> data);
 }
