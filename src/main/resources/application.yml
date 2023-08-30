@@ -1,0 +1,33 @@
+productApi:
+    baseUrl: https://dummyjson.com
+    categoryUrl: ${productApi.baseUrl}/products/category/
+    categoriesUrl: ${productApi.baseUrl}/products/categories
+
+# who will receive report in email message
+subscribers:
+  emails:
+    - kirill19962003@gmail.com
+
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SENDER_EMAIL} # email from which you will send message
+    password: ${SENDER_PASSWORD} # application password as
+                                 # described here https://stackoverflow.com/questions/26594097/javamail-exception-javax-mail-authenticationfailedexception-534-5-7-9-applicatio/72592946#72592946
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydb
+
+logging:
+  level:
+    ru.clevertec.sm.aspect: warn
