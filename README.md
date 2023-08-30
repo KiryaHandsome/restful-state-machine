@@ -62,6 +62,10 @@ This repository contains a RESTful application that leverages Spring State Machi
    ./run.sh
    ```
 
+### State machine diagram
+
+![](/uml/StateMachineUML.png)
+
 
 ### Usage
 
