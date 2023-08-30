@@ -51,6 +51,10 @@ public class MakeCsvFilesAction implements Action<State, Event> {
                 csvService.writeDataToCsv(folderPath, category, data);
             }
             nextEvent = Event.MAKE_CSV_FILES;
+        } else {
+            context.getExtendedState()
+                    .getVariables()
+                    .remove(ServiceConstants.CURRENT_CATEGORY_ITERATOR);
         }
         StateMachineUtil.sendEvent(context.getStateMachine(), nextEvent);
     }

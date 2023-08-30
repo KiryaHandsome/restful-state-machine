@@ -11,7 +11,9 @@ import ru.clevertec.sm.statemachine.Event;
 import ru.clevertec.sm.statemachine.State;
 import ru.clevertec.sm.util.ServiceConstants;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,7 +37,7 @@ public class StateMachineServiceImpl implements StateMachineService {
         shouldSendEmail(sendEmail);
         Event nextEvent = Event.FETCH_CATEGORIES;
         if (category.isPresent()) {
-            Iterator<String> categoryIterator = new SingletonIterator<>(category.get());
+            Iterator<String> categoryIterator = (new ArrayList<>(List.of(category.get()))).iterator();
             putVariableToSM(ServiceConstants.CURRENT_CATEGORY_ITERATOR, categoryIterator);
             nextEvent = Event.MAKE_CSV_FILES;
         }

@@ -8,7 +8,7 @@ import ru.clevertec.sm.statemachine.action.MakeZipArchivesAction;
 public class FakeMakeZipArchivesAction extends MakeZipArchivesAction {
 
     public FakeMakeZipArchivesAction() {
-        super(null);
+        super(null, null);
     }
 
     @Override

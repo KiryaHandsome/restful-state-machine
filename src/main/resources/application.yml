@@ -8,6 +8,7 @@ subscribers:
   emails:
     - kirill19962003@gmail.com
 
+
 spring:
   mail:
     host: smtp.gmail.com
@@ -23,6 +24,9 @@ spring:
             enable: true
           ssl:
             trust: smtp.gmail.com
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydb
 
 logging:
   level:

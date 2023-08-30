@@ -27,11 +27,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State, Event> {
 
+    private final SendEmailAction sendEmailAction;
     private final MakeCsvFilesAction makeCsvFilesAction;
     private final MakeZipArchivesAction makeZipArchivesAction;
     private final StateMachineListener<State, Event> listener;
     private final FetchCategoriesAction fetchCategoriesAction;
-    private final SendEmailAction sendEmailAction;
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<State, Event> config) throws Exception {

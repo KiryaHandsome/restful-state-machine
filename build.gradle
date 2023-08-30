@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ru.clevertec'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
     sourceCompatibility = '17'
@@ -24,7 +24,7 @@ repositories {
 ext {
     set('testcontainersVersion', "1.18.3")
     set('opencsvVersion', "5.8")
-    set('statemachineStarterVersion', "3.2.1")
+    set('statemachineVersion', "3.2.1")
 }
 
 dependencies {
@@ -32,13 +32,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    implementation "org.springframework.statemachine:spring-statemachine-starter:${statemachineStarterVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation "org.springframework.statemachine:spring-statemachine-starter:${statemachineVersion}"
+    implementation "org.springframework.statemachine:spring-statemachine-data-mongodb:${statemachineVersion}"
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {
